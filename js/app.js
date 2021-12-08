@@ -2,14 +2,16 @@
                  Variables
 ========================================= */
 /*
- * 1 seleccionar carrito de compras
- * 2 seleccionar div que contiene los cursos 
+ * 1 seleccionar el <div> que contiene los cursos 
+ * 2 seleccionar carrito de compras
+ * 3 seleccionar el contenido del carrito de compras 
  */
-const carrito = document.querySelector("#carrito"); /*1*/
-const listaCursos = document.querySelector("#lista-cursos"); /*2*/
+const listaCursos = document.querySelector("#lista-cursos"); /*1*/
+const carrito = document.querySelector("#carrito"); /*2*/
+const contenidoCarritoHtml = document.querySelector("#contenido-carrito"); /*3*/
 
-// para Guardar articulos del carrito
-let articulosCarrito = []
+// para Guardar los cursos en el carrito
+let cursosCarrito = [];
 
 /* =========================================
                EventListeners
@@ -18,7 +20,7 @@ cargarEventListeners();
 function cargarEventListeners() {
     // Agregar un curso al precionar "Agregar el Carrito"
     listaCursos.addEventListener('click', seleccionarCurso);
-}
+};
 
 
 /* =========================================
@@ -34,8 +36,8 @@ function seleccionarCurso(e) {
         const cursoSeleccionado = e.target.parentElement.parentElement;
         // Pasar el DIV
         extraerInfoCurso(cursoSeleccionado)
-    }
-}
+    };
+};
 
 function extraerInfoCurso(curso) {
     // Crear un objeto con el contenido del curso seleccionado
@@ -45,15 +47,15 @@ function extraerInfoCurso(curso) {
         precio   : curso.querySelector('.precio span').textContent,
         id       : curso.querySelector('a').getAttribute('data-id'),
         cantidad : 1
-    }
+    };
 
     // Revisar si un elemento ya existe en el carrito
-    const existe = articulosCarrito.some( curso => curso.id === infoCurso.id )
+    const existe = cursosCarrito.some( curso => curso.id === infoCurso.id );
     
     // Si existe... Actualizar Cantidad
     if( existe ) {
         // Crear nuevo arreglo con .map
-        const cursos = articulosCarrito.map( curso => {
+        const cursos = cursosCarrito.map( curso => {
             if( curso.id === infoCurso.id ) {       
                 curso.cantidad++;
                 // retorna el objeto actualizado
@@ -61,18 +63,54 @@ function extraerInfoCurso(curso) {
             } else {
                 // retorna los objetos que no son duplicados
                 return curso;
-            }
-        })
+            };
+        });
         // Actualizar el arreglo de carrito
-        articulosCarrito = [ ...cursos ]
+        cursosCarrito = [ ...cursos ]
 
-        // Mostrar arreglo en consola
-        console.log(articulosCarrito)
+        carritoHTML(cursosCarrito)
     } else {
         // Agregar elemento al arreglo de carrito
-        articulosCarrito = [ ...articulosCarrito, infoCurso ];
+        cursosCarrito = [ ...cursosCarrito, infoCurso ];
 
-        // Mostrar arreglo en consola
-        console.log(articulosCarrito)
-    }
-}
+        // Mostrar arreglo de cursos en el HTML
+        carritoHTML(cursosCarrito);
+    };
+};
+
+function carritoHTML(cursosCarrito) {
+
+    // Eliminar el HTML del carrito para evitar que se duplique
+    limpiarHTML();
+
+    console.log(cursosCarrito)
+
+    // Iterar el arreglo de cursos
+    cursosCarrito.forEach(curso => {
+        // Crear un <tr> con los datos de cada curso
+        const { imagen, titulo, precio, cantidad, id } = curso;
+        const cursoHtml = document.createElement('tr');
+
+        cursoHtml.innerHTML = `
+        <td>
+            <img src="${imagen}" width="100">
+        </td>
+        <td>${titulo}</td>
+        <td>${precio}</td>
+        <td>${cantidad}</td>
+        <td>
+            <a href="#" class="borrar-curso" data-id="${id}"> X </a>
+        </td>
+        `;
+
+        // Agrega el HTML del carrito en el tbody
+        contenidoCarritoHtml.appendChild(cursoHtml);
+    });
+};
+
+function limpiarHTML() {
+    // Elimina los hijos del tbody
+    while( contenidoCarritoHtml.firstChild ) {
+        contenidoCarritoHtml.removeChild( contenidoCarritoHtml.firstChild );
+    };
+};
