@@ -2,13 +2,15 @@
                  Variables
 ========================================= */
 /*
- * 1 seleccionar el <div> que contiene los cursos 
- * 2 seleccionar carrito de compras
- * 3 seleccionar el contenido del carrito de compras 
+ * 1 div que contiene los cursos 
+ * 2 carrito de compras
+ * 3 contenido del carrito de compras 
+ * 4 boton para vaciar el carrito
  */
 const listaCursos = document.querySelector("#lista-cursos"); /*1*/
 const carrito = document.querySelector("#carrito"); /*2*/
 const contenidoCarritoHtml = document.querySelector("#contenido-carrito"); /*3*/
+const vaciarCarritoBtn = document.querySelector("#vaciar-carrito") /*4*/
 
 // para Guardar los cursos en el carrito
 let cursosCarrito = [];
@@ -23,6 +25,9 @@ function cargarEventListeners() {
     
     // Elimina un curso del carrito al precionar "X"
     carrito.addEventListener('click', eliminarCurso);
+
+    // Elimina el HTML del carrito al precionar "Vaciar Carrito"
+    vaciarCarritoBtn.addEventListener('click', vaciarCarrito);
 };
 
 
@@ -130,4 +135,12 @@ function eliminarCurso(e) {
         // Vuelve a generar el html
         carritoHTML(cursosCarrito);
     };
+};
+
+function vaciarCarrito() {
+    // Reseteamos el arreglo
+    cursosCarrito = [];
+
+    // Eliminamos todo el HTML
+    limpiarHTML();
 };
